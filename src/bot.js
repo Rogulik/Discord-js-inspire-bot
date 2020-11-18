@@ -18,7 +18,6 @@ client.on('ready', () => {
        
        randomQuotes = [...data]
     });
-    console.log('The bot has logged in')
     // const channel = client.channels.cache.get("768603521443561505").then(channel => {
     //     channel.send("Message");
     //  });
