@@ -1,0 +1,1 @@
+Simple Discord bot for daily inspirational message built with node and discord.js
