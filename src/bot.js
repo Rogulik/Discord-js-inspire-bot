@@ -15,12 +15,8 @@ client.on('ready', () => {
       return response.json();
     })
     .then(function(data) {
-       
        randomQuotes = [...data]
     });
-    // const channel = client.channels.cache.get("768603521443561505").then(channel => {
-    //     channel.send("Message");
-    //  });
      
     let scheduledMessage = new cron.CronJob('00 46 14 * * *', () => {
         let randomQuote = randomQuotes[Math.floor(Math.random() * randomQuotes.length)];
@@ -53,3 +49,4 @@ client.on('message',(message) => {
 })
 
 client.login(process.env.DISCORDJS_BOT_TOKEN)
+
