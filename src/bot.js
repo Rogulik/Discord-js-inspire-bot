@@ -1,14 +1,10 @@
 require("dotenv").config()
 const cron = require('cron');
 const fetch = require('node-fetch');
-const express = require("express")
 const { Client } = require('discord.js')
 const client = new Client()
 
-const app = express()
-
 const PREFIX = '$'
-
 let randomQuotes = []
 
 
@@ -52,8 +48,3 @@ let randomQuotes = []
     })
     
     client.login(process.env.DISCORDJS_BOT_TOKEN)
-
-
-
-app.listen(process.env.PORT || 3000, 
-	() => console.log("Server is running..."));
