@@ -61,7 +61,7 @@ let randomQuotes = []
                   return response.json();
                 })
                 .then(function(data) {
-                    let catsLink = data.data.children[0].data.link_url
+                    let catsLink = data[0].data.children[0].data.url
                     const embed = new MessageEmbed()
                     .setTitle('Your random kitty')
                     .setImage(catsLink)
