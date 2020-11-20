@@ -1,7 +1,7 @@
 require("dotenv").config()
 const cron = require('cron');
 const fetch = require('node-fetch');
-const { Client } = require('discord.js')
+const { Client, MessageEmbed } = require('discord.js')
 const client = new Client()
 
 const PREFIX = '$'
@@ -16,6 +16,17 @@ let randomQuotes = []
         .then(function(data) {
            randomQuotes = [...data]
         });
+        // const channel = client.channels.cache.get(process.env.CHANNEL_ID);
+        // channel.messages.fetch({ limit: 58 }).then(messages => {
+        //     //Iterate through the messages here with the variable "messages".
+        //     messages.forEach(message => {
+        //         if(message.author.id === '778567076272406528'){
+        //             message.reactions.cache.map(i => {
+        //                 console.log(i._emoji.name === '❤️')
+        //             })
+        //         }
+        //     })
+        // })
     })
     
     client.on('message',(message) => {
@@ -28,7 +39,10 @@ let randomQuotes = []
             .split(/\s+/)
     
             if(CMD_NAME === 'inspire'){
-                message.reply(`"${randomQuote.text}" - ${randomQuote.author}`)
+                const embed = new MessageEmbed()
+                .setTitle(`"${randomQuote.text}"`)
+                .setAuthor(randomQuote.author)
+                message.reply(embed)
             }else if(CMD_NAME === 'meme'){
                 fetch("https://www.reddit.com/r/memes/comments.json?limit=1")
                 .then(function(response) {
@@ -36,7 +50,10 @@ let randomQuotes = []
                 })
                 .then(function(data) {
                     let memeLink = data.data.children[0].data.link_url
-                    message.channel.send("Your random meme: ", {files: [`${memeLink}`]})
+                    const embed = new MessageEmbed()
+                    .setTitle('Your random meme')
+                    .setImage(memeLink)
+                    message.channel.send(embed)
                 });
             }else if(CMD_NAME === 'kitty'){
                 fetch("https://www.reddit.com/r/cats/comments.json?limit=1")
@@ -45,7 +62,12 @@ let randomQuotes = []
                 })
                 .then(function(data) {
                     let catsLink = data.data.children[0].data.link_url
-                    message.channel.send("Your random kitty: ", {files: [`${catsLink}`]})
+                    const embed = new MessageEmbed()
+                    .setTitle('Your random kitty')
+                    .setImage(catsLink)
+                    .setURL(catsLink)
+
+                    message.channel.send(embed)
                 });
             }else if(CMD_NAME === 'motivate'){
                 fetch("https://www.reddit.com/r/MotivationalPics/random.json")
@@ -55,7 +77,12 @@ let randomQuotes = []
                 })
                 .then(function(data) {
                     const motivateLink = (data[0].data.children[0].data.url)
-                    message.channel.send("Your random motivational pic: ", {files: [`${motivateLink}`]})
+                    const embed = new MessageEmbed()
+                    .setTitle('Your random motivational pic')
+                    .setImage(motivateLink)
+                    .setURL(motivateLink)
+
+                    message.channel.send(embed)
                     message.channel.stopTyping()
                 });
             }else if(CMD_NAME === 'flower'){
@@ -66,7 +93,12 @@ let randomQuotes = []
                 })
                 .then(function(data) {
                     const flowerLink = (data[0].data.children[0].data.url)
-                    message.channel.send("Your random flower: ", {files: [`${flowerLink}`]})
+                    const embed = new MessageEmbed()
+                    .setTitle('Your random flower')
+                    .setImage(flowerLink)
+                    .setURL(flowerLink)
+
+                    message.channel.send(embed)
                     message.channel.stopTyping()
                 });
             }else if(CMD_NAME === 'weather'){
@@ -76,8 +108,20 @@ let randomQuotes = []
                 })
                 .then(function(data) {
                 let icon = data.current.condition.icon.substring(2)
-                message.channel.send(`
-                The weather in ${data.location.name} is: ${data.current.temp_c} degrees, ${data.current.condition.text}`, {files: [`https://${icon}`]})
+                const embed = new MessageEmbed()
+                .setTitle('Weather for today')
+                .addFields(
+                    {
+                        name:' Temperature',
+                        value: data.current.temp_c
+                    },
+                    {
+                        name: 'Conditions',
+                        value: data.current.condition.text
+                    }
+                )
+                    .setImage(`https://${icon}`)
+                    message.channel.send(embed)
                 });
             }
         }
@@ -90,15 +134,113 @@ let randomQuotes = []
             message.reply('Fuck You! I will give You kiss anyway :kissing_closed_eyes:')
         }
         
+
     })
 
-    let scheduledMessage = new cron.CronJob('00 00 8 * * *', () => {
+    let scheduledMessageQuote = new cron.CronJob('00 00 8 * * *', () => {
+
         let randomQuote = randomQuotes[Math.floor(Math.random() * randomQuotes.length)];
         client.channels.fetch(process.env.CHANNEL_ID).then((channel) => {
-            channel.send(`Your inspirational quote for today is: "${randomQuote.text}" - ${randomQuote.author}, Hope that makes Your day better!`);
+            const embed = new MessageEmbed()
+            .setTitle('Your inspirational quote for today')
+            .setAuthor(randomQuote.author)
+            .setFooter('Hope that makes Your day better!')
+            .setImage(flowerLink)
+            .addFields({
+                name: randomQuote.text,
+                value:''
+            })
+            .setURL(flowerLink)
+
+            channel.send(embed);
         });
     });
+
+    let scheduledMessageWeather = new cron.CronJob('00 00 8 * * *', () => {
+        fetch(`http://api.weatherapi.com/v1/forecast.json?key=93f46ad1d54041c9b7c150429201911&q=Lisbon&days=1`)
+        .then(function(response) {
+        return response.json();
+        })
+        .then(function(data) {
+        const forecastDay = data.forecast.forecastday[0]
+        client.channels.fetch(process.env.CHANNEL_ID).then((channel) => {
+                const embed = new MessageEmbed()
+                .setTitle('Daily forecast for Lisbon')
+                .setAuthor(forecastDay.date)
+                .addFields(
+                    {
+                        name:'Max Temperature',
+                        value: forecastDay.day.maxtemp_c,
+                        inline: true
+                    },
+                    {
+                        name: 'Min Temperature',
+                        value: forecastDay.day.mintemp_c,
+                        inline: true
+                    },
+                    {
+                        name: 'Average Temperature',
+                        value: forecastDay.day.avgtemp_c,
+                        inline: true
+                    },
+                    {
+                        name: 'Condition',
+                        value: forecastDay.day.condition.text
+                    }
+                )
+                .setImage(`https:${forecastDay.day.condition.icon}`)
+                .setFooter('Have a wonderful day Mariana!')
+
+                channel.send(embed);
+            });
+           
+        })
+
+        fetch(`http://api.weatherapi.com/v1/forecast.json?key=93f46ad1d54041c9b7c150429201911&q=Warsaw&days=1`)
+        .then(function(response) {
+        return response.json();
+        })
+        .then(function(data) {
+        const forecastDay = data.forecast.forecastday[0]
+        client.channels.fetch(process.env.CHANNEL_ID).then((channel) => {
+                const embed = new MessageEmbed()
+                .setTitle('Daily forecast for Warsaw')
+                .setAuthor(forecastDay.date)
+                .addFields(
+                    {
+                        name:'Max Temperature',
+                        value: forecastDay.day.maxtemp_c,
+                        inline: true
+                    },
+                    {
+                        name: 'Min Temperature',
+                        value: forecastDay.day.mintemp_c,
+                        inline: true
+                    },
+                    {
+                        name: 'Average Temperature',
+                        value: forecastDay.day.avgtemp_c,
+                        inline: true
+                    },
+                    {
+                        name: 'Condition',
+                        value: forecastDay.day.condition.text
+                    }
+                )
+                .setImage(`https:${forecastDay.day.condition.icon}`)
+                .setFooter('Have a wonderful day Marcin!')
+
+                channel.send(embed);
+            });
+           
+        })
+        
+    });
+
+
+   
     
-    scheduledMessage.start()
+    scheduledMessageQuote.start()
+    scheduledMessageWeather.start()
     
     client.login(process.env.DISCORDJS_BOT_TOKEN)
