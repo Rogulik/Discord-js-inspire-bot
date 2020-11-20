@@ -56,7 +56,7 @@ let randomQuotes = []
                     message.channel.send(embed)
                 });
             }else if(CMD_NAME === 'kitty'){
-                fetch("https://www.reddit.com/r/cats/comments.json?limit=1")
+                fetch("https://www.reddit.com/r/cats/random.json")
                 .then(function(response) {
                   return response.json();
                 })
