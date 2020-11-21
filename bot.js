@@ -170,19 +170,14 @@ let randomQuotes = []
     })
 
     let scheduledMessageQuote = new cron.CronJob('00 00 8 * * *', () => {
-
+        
         let randomQuote = randomQuotes[Math.floor(Math.random() * randomQuotes.length)];
         client.channels.fetch(process.env.CHANNEL_ID).then((channel) => {
             const embed = new MessageEmbed()
-            .setTitle('Your inspirational quote for today')
-            .setAuthor(randomQuote.author)
+            .setTitle(`"${randomQuote.text}"`)
+            .setDescription(randomQuote.author)
+            .setAuthor('Your inspirational quote for today')
             .setFooter('Hope that makes Your day better!')
-            .setImage(flowerLink)
-            .addFields({
-                name: randomQuote.text,
-                value:''
-            })
-            .setURL(flowerLink)
 
             channel.send(embed);
         });
