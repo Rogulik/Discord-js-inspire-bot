@@ -15,6 +15,9 @@ let randomQuotes = []
         })
         .then(function(data) {
            randomQuotes = [...data]
+        })
+        .catch(err => {
+            console.err(err)
         });
         // const channel = client.channels.cache.get(process.env.CHANNEL_ID);
         // channel.messages.fetch({ limit: 58 }).then(messages => {
@@ -54,20 +57,26 @@ let randomQuotes = []
                     .setTitle('Your random meme')
                     .setImage(memeLink)
                     message.channel.send(embed)
+                })
+                .catch(err => {
+                    console.err(err)
                 });
-            }else if(CMD_NAME === 'kitty'){
-                fetch("https://www.reddit.com/r/cats/random.json")
+            }else if(CMD_NAME === 'aww'){
+                fetch("https://www.reddit.com/r/aww/random.json")
                 .then(function(response) {
                   return response.json();
                 })
                 .then(function(data) {
-                    let catsLink = data[0].data.children[0].data.url
+                    let catsLink = (data[0].data.children[0].data.url)
                     const embed = new MessageEmbed()
-                    .setTitle('Your random kitty')
+                    .setTitle('Your random aww pic')
                     .setImage(catsLink)
                     .setURL(catsLink)
 
                     message.channel.send(embed)
+                })
+                .catch(err => {
+                    console.err(err)
                 });
             }else if(CMD_NAME === 'motivate'){
                 fetch("https://www.reddit.com/r/MotivationalPics/random.json")
@@ -84,6 +93,9 @@ let randomQuotes = []
 
                     message.channel.send(embed)
                     message.channel.stopTyping()
+                })
+                .catch(err => {
+                    console.err(err)
                 });
             }else if(CMD_NAME === 'flower'){
                 fetch("https://www.reddit.com/r/flowers/random.json")
@@ -100,6 +112,9 @@ let randomQuotes = []
 
                     message.channel.send(embed)
                     message.channel.stopTyping()
+                })
+                .catch(err => {
+                    console.err(err)
                 });
             }else if(CMD_NAME === 'weather'){
                 fetch(`http://api.weatherapi.com/v1/current.json?key=93f46ad1d54041c9b7c150429201911&q=${args}`)
@@ -122,6 +137,23 @@ let randomQuotes = []
                 )
                     .setImage(`https://${icon}`)
                     message.channel.send(embed)
+                })
+                .catch(err => {
+                    console.err(err)
+                });
+            }else if(CMD_NAME === 'fact'){
+                fetch(`https://uselessfacts.jsph.pl/random.json?language=en`)
+                .then(function(response) {
+                return response.json();
+                })
+                .then(function(data) {
+                const embed = new MessageEmbed()
+                .setAuthor(data.source)
+                .setTitle(data.text)
+                    message.channel.send(embed)
+                })
+                .catch(err => {
+                    console.err(err)
                 });
             }
         }
@@ -192,6 +224,9 @@ let randomQuotes = []
                 .setFooter('Have a wonderful day Mariana!')
 
                 channel.send(embed);
+            })
+            .catch(err => {
+                console.err(err)
             });
            
         })
@@ -231,6 +266,9 @@ let randomQuotes = []
                 .setFooter('Have a wonderful day Marcin!')
 
                 channel.send(embed);
+            })
+            .catch(err => {
+                console.err(err)
             });
            
         })
