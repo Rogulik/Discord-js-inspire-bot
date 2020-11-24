@@ -169,7 +169,7 @@ let randomQuotes = []
 
     })
 
-    let scheduledMessageQuote = new cron.CronJob('00 00 8 * * *', () => {
+    let scheduledMessageQuote = new cron.CronJob('00 00 7 * * *', () => {
         
         let randomQuote = randomQuotes[Math.floor(Math.random() * randomQuotes.length)];
         client.channels.fetch(process.env.CHANNEL_ID).then((channel) => {
@@ -183,7 +183,7 @@ let randomQuotes = []
         });
     });
 
-    let scheduledMessageWeather = new cron.CronJob('00 00 8 * * *', () => {
+    let scheduledMessageWeather = new cron.CronJob('00 00 7 * * *', () => {
         fetch(`http://api.weatherapi.com/v1/forecast.json?key=93f46ad1d54041c9b7c150429201911&q=Lisbon&days=1`)
         .then(function(response) {
         return response.json();
